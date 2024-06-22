@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>セルフオーダーシステム</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .tabs { display: flex; cursor: pointer; }
+        .tab { padding: 10px 20px; border: 1px solid #ccc; border-bottom: none; background-color: #f1f1f1; }
+        .tab.active { background-color: #ffffff; border-top: 2px solid #000; font-weight: bold; }
+        .tab-content { display: none; border: 1px solid #ccc; padding: 20px; }
+        .tab-content.active { display: block; }
+        .menu-item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        #order-list { margin-top: 20px; }
+        .order-item { display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding: 5px 0; }
+        .order-item:last-child { border-bottom: none; }
+        .order-item button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>メニュー</h1>
+    <div class="tabs">
+        <div class="tab active" data-tab="desserts">デザート</div>
+        <div class="tab" data-tab="yakitori">焼き鳥</div>
+        <div class="tab" data-tab="ippinmono">一品物</div>
+    </div>
+    <div id="menu">
+        <div class="tab-content active" id="desserts"></div>
+        <div class="tab-content" id="yakitori"></div>
+        <div class="tab-content" id="ippinmono"></div>
+    </div>
+    <h2>注文リスト</h2>
+    <div id="order-list"></div>
+    <script>
+        const menuItems = [
+            { name: 'アイスクリーム', price: 300, category: 'desserts' },
+            { name: 'ケーキ', price: 500, category: 'desserts' },
+            { name: '焼き鳥（ねぎま）', price: 150, category: 'yakitori' },
+            { name: '焼き鳥（つくね）', price: 180, category: 'yakitori' },
+            { name: '枝豆', price: 200, category: 'ippinmono' },
+            { name: '唐揚げ', price: 400, category: 'ippinmono' }
+        ];
+
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const orderList = document.getElementById('order-list');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+
+        menuItems.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'menu-item';
+            itemDiv.innerHTML = `<h3>${item.name}</h3><p>価格: ¥${item.price}</p><button onclick="order('${item.name}', ${item.price})">注文</button>`;
+            document.getElementById(item.category).appendChild(itemDiv);
+        });
+
+        function order(name, price) {
+            const orderItem = document.createElement('div');
+            orderItem.className = 'order-item';
+            orderItem.innerHTML = `<p>${name}: ¥${price}</p><button onclick="cancelOrder(this)">取消</button>`;
+            orderList.appendChild(orderItem);
+        }
+
+        function cancelOrder(button) {
+            const orderItem = button.parentElement;
+            orderList.removeChild(orderItem);
+        }
+    </script>
+</body>
+</html>
